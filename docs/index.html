@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>RECON//NEXUS â€” Smart Pentest Recon Engine</title>
+<title>RECON//NEXUS — Smart Pentest Recon Engine</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
@@ -118,27 +118,27 @@ footer a{color:var(--cyn);text-decoration:none}
 <div class="scanlines"></div>
 <header>
   <div class="logo"><div class="radar"></div>
-    <div class="brand"><h1>RECON<b>//</b>NEXUS</h1><small>SMART PENTEST RECON ENGINE Â· v3.0.0 Â· WEB</small></div>
+    <div class="brand"><h1>RECON<b>//</b>NEXUS</h1><small>SMART PENTEST RECON ENGINE · v3.0.0 · WEB</small></div>
   </div>
   <div class="hspace"></div>
-  <div class="hstat"><span id="scope-txt">SCOPE: â€”</span></div>
+  <div class="hstat"><span id="scope-txt">SCOPE: —</span></div>
   <div class="hstat">UTC <span id="utc">--:--:--</span></div>
 </header>
 <div class="wrap">
   <section class="console">
-    <div class="console-tag"><span>â–TARGET ACQUISITION</span><span class="scope">âš  AUTHORIZED SCOPE ONLY</span></div>
+    <div class="console-tag"><span>▍TARGET ACQUISITION</span><span class="scope">⚠ AUTHORIZED SCOPE ONLY</span></div>
     <div class="promptline">
       <span class="prompt">root@nexus:~$ <span>./acquire --domain</span></span>
       <input id="target" type="text" placeholder="target-domain.com" spellcheck="false" autocomplete="off"/>
       <button class="lock" id="lockbtn">LOCK TARGET</button>
       <button class="ghost" id="clearbtn">CLEAR</button>
     </div>
-    <div class="hint">press <kbd>/</kbd> to focus Â· <kbd>ENTER</kbd> to lock Â· all payloads re-arm automatically</div>
+    <div class="hint">press <kbd>/</kbd> to focus · <kbd>ENTER</kbd> to lock · all payloads re-arm automatically</div>
   </section>
   <div class="workspace">
     <div class="main-col">
       <div class="filterbar">
-        <input id="filter" placeholder="â–¸ filter payloadsâ€¦"/>
+        <input id="filter" placeholder="▸ filter payloads…"/>
         <span class="chip on" data-sev="all">ALL</span>
         <span class="chip" data-sev="critical">CRITICAL</span>
         <span class="chip" data-sev="high">HIGH</span>
@@ -157,7 +157,7 @@ footer a{color:var(--cyn);text-decoration:none}
     <aside class="side">
       <div class="panel">
         <div class="ptitle">MISSION TELEMETRY</div>
-        <div class="stat-target"><small>LOCKED TARGET</small><div id="st-target">â€”</div></div>
+        <div class="stat-target"><small>LOCKED TARGET</small><div id="st-target">—</div></div>
         <div class="sgrid">
           <div class="stat s1"><small>PAYLOADS</small><b id="st-armed">0</b></div>
           <div class="stat s2"><small>EXECUTED</small><b id="st-exec">0</b></div>
@@ -166,7 +166,7 @@ footer a{color:var(--cyn);text-decoration:none}
         </div>
       </div>
       <div class="panel">
-        <div class="ptitle">OPS LOG â€” LIVE FEED</div>
+        <div class="ptitle">OPS LOG — LIVE FEED</div>
         <div id="log"></div>
       </div>
       <div class="panel">
@@ -177,9 +177,9 @@ footer a{color:var(--cyn);text-decoration:none}
     </aside>
   </div>
   <footer>
-    <span>RECON//NEXUS v3.0.0 â€” engineered for authorized reconnaissance only</span>
-    <span class="ethic">âš  Use exclusively on systems you own or have written permission to test</span>
-    <span>by <b>empsolohk</b> Â· concept by <a href="https://www.linkedin.com/in/boopathi-s/" target="_blank" rel="noopener">Boopathi S</a></span>
+    <span>RECON//NEXUS v3.0.0 — engineered for authorized reconnaissance only</span>
+    <span class="ethic">⚠ Use exclusively on systems you own or have written permission to test</span>
+    <span>by <b>empsolohk</b> · concept by <a href="https://www.linkedin.com/in/boopathi-s/" target="_blank" rel="noopener">Boopathi S</a></span>
   </footer>
 </div>
 <script>
@@ -235,29 +235,29 @@ const TOTAL=CATS.reduce((a,c)=>a+c.dorks.length,0);
 const S={target:'',engine:'google',exec:new Set(JSON.parse(localStorage.getItem('nx_exec')||'[]')),copied:0,sevs:new Set()};
 const interp=q=>q.replaceAll('{t}',S.target||'{TARGET}');
 const esc=s=>String(s).replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
-function rowHTML(d,key){const[label,q,sev,direct]=d;return `<div class="dork" data-key="${key}" data-sev="${sev}" data-search="${esc((label+' '+q).toLowerCase())}"><span class="sev">${sev.toUpperCase()}</span><div><span class="dlabel">${esc(label)}${direct?'<i class="direct">DIRECT</i>':''}</span><code class="dq">${esc(interp(q))}</code></div><button class="dbtn copy" data-act="copy">COPY</button><button class="dbtn run" data-act="run">RUN â†—</button></div>`;}
-function render(){$('#cats').innerHTML=CATS.map((c,i)=>`<section class="cat" data-name="${c.name}" style="--acc:${c.acc}"><header class="cat-h"><span class="cat-idx">${String(i+1).padStart(2,'0')}</span><h2>${c.name.toUpperCase()}</h2><span class="cat-meta"><b class="cat-vis">${c.dorks.length}</b> SHOWN</span><div class="cat-acts"><button class="cbtn" data-act="copyall">COPY ALL</button><button class="cbtn" data-act="toggle">â–¾</button></div></header><div class="cat-b">${c.dorks.map((d,j)=>rowHTML(d,c.name+'#'+j)).join('')}</div></section>`).join('');refreshDone();}
-function log(type,msg){const el=$('#log'),ts=new Date().toTimeString().slice(0,8);const d=document.createElement('div');d.className='ln '+type;d.innerHTML=`<span class="t">[${ts}]</span> â–¸ ${esc(msg)}`;el.appendChild(d);el.scrollTop=el.scrollHeight;}
-function refreshDone(){$$('.dork').forEach(r=>{const on=S.exec.has(r.dataset.key);r.classList.toggle('done',on);r.querySelector('.run').textContent=on?'âœ“ DONE':'RUN â†—';});}
+function rowHTML(d,key){const[label,q,sev,direct]=d;return `<div class="dork" data-key="${key}" data-sev="${sev}" data-search="${esc((label+' '+q).toLowerCase())}"><span class="sev">${sev.toUpperCase()}</span><div><span class="dlabel">${esc(label)}${direct?'<i class="direct">DIRECT</i>':''}</span><code class="dq">${esc(interp(q))}</code></div><button class="dbtn copy" data-act="copy">COPY</button><button class="dbtn run" data-act="run">RUN ↗</button></div>`;}
+function render(){$('#cats').innerHTML=CATS.map((c,i)=>`<section class="cat" data-name="${c.name}" style="--acc:${c.acc}"><header class="cat-h"><span class="cat-idx">${String(i+1).padStart(2,'0')}</span><h2>${c.name.toUpperCase()}</h2><span class="cat-meta"><b class="cat-vis">${c.dorks.length}</b> SHOWN</span><div class="cat-acts"><button class="cbtn" data-act="copyall">COPY ALL</button><button class="cbtn" data-act="toggle">▾</button></div></header><div class="cat-b">${c.dorks.map((d,j)=>rowHTML(d,c.name+'#'+j)).join('')}</div></section>`).join('');refreshDone();}
+function log(type,msg){const el=$('#log'),ts=new Date().toTimeString().slice(0,8);const d=document.createElement('div');d.className='ln '+type;d.innerHTML=`<span class="t">[${ts}]</span> ▸ ${esc(msg)}`;el.appendChild(d);el.scrollTop=el.scrollHeight;}
+function refreshDone(){$$('.dork').forEach(r=>{const on=S.exec.has(r.dataset.key);r.classList.toggle('done',on);r.querySelector('.run').textContent=on?'✓ DONE':'RUN ↗';});}
 const persist=()=>localStorage.setItem('nx_exec',JSON.stringify([...S.exec]));
 function copyText(t){if(navigator.clipboard)navigator.clipboard.writeText(t).catch(()=>{});else{const a=document.createElement('textarea');a.value=t;document.body.appendChild(a);a.select();document.execCommand('copy');a.remove();}}
 function flash(b,t){const o=b.textContent;b.textContent=t;setTimeout(()=>b.textContent=o,1100);}
-function runDork(key){const d=DMAP[key];if(!S.target){log('warn','no target locked');$('#target').focus();return;}const url=d[3]?interp(d[1]):ENGINES[S.engine]+encodeURIComponent(interp(d[1]));window.open(url,'_blank','noopener');S.exec.add(key);persist();const r=document.querySelector(`.dork[data-key="${CSS.escape(key)}"]`);r.classList.add('done');r.querySelector('.run').textContent='âœ“ DONE';log('sys',`executed â†’ ${d[0]} [${d[2].toUpperCase()}]`);updateStats();}
+function runDork(key){const d=DMAP[key];if(!S.target){log('warn','no target locked');$('#target').focus();return;}const url=d[3]?interp(d[1]):ENGINES[S.engine]+encodeURIComponent(interp(d[1]));window.open(url,'_blank','noopener');S.exec.add(key);persist();const r=document.querySelector(`.dork[data-key="${CSS.escape(key)}"]`);r.classList.add('done');r.querySelector('.run').textContent='✓ DONE';log('sys',`executed → ${d[0]} [${d[2].toUpperCase()}]`);updateStats();}
 function updateStats(){$('#st-armed').textContent=TOTAL;$('#st-exec').textContent=S.exec.size;$('#st-copied').textContent=S.copied;$('#st-cats').textContent=CATS.length;}
-function lock(){const v=$('#target').value.trim().toLowerCase().replace(/^https?:\/\//,'').split('/')[0];if(!/^([a-z0-9]([a-z0-9-]*[a-z0-9])?\.)+[a-z]{2,}$/.test(v)){log('err',`invalid target â†’ "${v||'âˆ…'}"`);return;}S.target=v;$$('.dq').forEach((el)=>{});CATS.forEach(c=>c.dorks.forEach((d,j)=>{document.querySelector(`.dork[data-key="${CSS.escape(c.name+'#'+j)}"] .dq`).textContent=interp(d[1]);}));$('#st-target').textContent=v;$('#scope-txt').textContent='SCOPE: '+v;log('sys',`TARGET LOCKED â†’ ${v} Â· ${TOTAL} payloads re-armed`);updateStats();}
+function lock(){const v=$('#target').value.trim().toLowerCase().replace(/^https?:\/\//,'').split('/')[0];if(!/^([a-z0-9]([a-z0-9-]*[a-z0-9])?\.)+[a-z]{2,}$/.test(v)){log('err',`invalid target → "${v||'∅'}"`);return;}S.target=v;$$('.dq').forEach((el)=>{});CATS.forEach(c=>c.dorks.forEach((d,j)=>{document.querySelector(`.dork[data-key="${CSS.escape(c.name+'#'+j)}"] .dq`).textContent=interp(d[1]);}));$('#st-target').textContent=v;$('#scope-txt').textContent='SCOPE: '+v;log('sys',`TARGET LOCKED → ${v} · ${TOTAL} payloads re-armed`);updateStats();}
 function applyFilter(){const term=$('#filter').value.trim().toLowerCase();let vis=0;$$('.dork').forEach(r=>{const ok=(!term||r.dataset.search.includes(term))&&(!S.sevs.size||S.sevs.has(r.dataset.sev));r.classList.toggle('hide',!ok);if(ok)vis++;});$$('.cat').forEach(c=>{const n=c.querySelectorAll('.dork:not(.hide)').length;c.classList.toggle('empty',n===0);c.querySelector('.cat-vis').textContent=n;});$('#viscount').textContent=`${vis}/${TOTAL}`;}
-$('#cats').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const act=b.dataset.act;if(act==='toggle'){const c=b.closest('.cat');c.classList.toggle('closed');b.textContent=c.classList.contains('closed')?'â–¸':'â–¾';return;}if(act==='copyall'){const cat=CATS.find(x=>x.name===b.closest('.cat').dataset.name);if(!S.target){log('warn','no target locked');return;}copyText(cat.dorks.map(d=>interp(d[1])).join('\n'));S.copied+=cat.dorks.length;log('sys',`${cat.dorks.length} queries copied`);flash(b,'âœ“ COPIED');updateStats();return;}const row=b.closest('.dork');if(!row)return;const d=DMAP[row.dataset.key];if(act==='copy'){copyText(interp(d[1]));S.copied++;log('info',`copied â†’ ${d[0]}`);flash(b,'âœ“');updateStats();}if(act==='run')runDork(row.dataset.key);});
+$('#cats').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const act=b.dataset.act;if(act==='toggle'){const c=b.closest('.cat');c.classList.toggle('closed');b.textContent=c.classList.contains('closed')?'▸':'▾';return;}if(act==='copyall'){const cat=CATS.find(x=>x.name===b.closest('.cat').dataset.name);if(!S.target){log('warn','no target locked');return;}copyText(cat.dorks.map(d=>interp(d[1])).join('\n'));S.copied+=cat.dorks.length;log('sys',`${cat.dorks.length} queries copied`);flash(b,'✓ COPIED');updateStats();return;}const row=b.closest('.dork');if(!row)return;const d=DMAP[row.dataset.key];if(act==='copy'){copyText(interp(d[1]));S.copied++;log('info',`copied → ${d[0]}`);flash(b,'✓');updateStats();}if(act==='run')runDork(row.dataset.key);});
 $('#lockbtn').onclick=lock;$('#target').addEventListener('keydown',e=>{if(e.key==='Enter')lock();});
-$('#clearbtn').onclick=()=>{S.target='';$('#target').value='';$('#st-target').textContent='â€”';$('#scope-txt').textContent='SCOPE: â€”';log('warn','target released');};
+$('#clearbtn').onclick=()=>{S.target='';$('#target').value='';$('#st-target').textContent='—';$('#scope-txt').textContent='SCOPE: —';log('warn','target released');};
 $('#filter').addEventListener('input',applyFilter);
 $$('.chip').forEach(ch=>ch.addEventListener('click',()=>{const sev=ch.dataset.sev;if(sev==='all'){S.sevs.clear();$$('.chip').forEach(c=>c.classList.remove('on'));ch.classList.add('on');}else{$('.chip[data-sev="all"]').classList.remove('on');ch.classList.toggle('on');ch.classList.contains('on')?S.sevs.add(sev):S.sevs.delete(sev);}applyFilter();}));
-$('#engine').onchange=e=>{S.engine=e.target.value;log('info',`engine â†’ ${S.engine.toUpperCase()}`);};
+$('#engine').onchange=e=>{S.engine=e.target.value;log('info',`engine → ${S.engine.toUpperCase()}`);};
 $('#a-reset').onclick=()=>{S.exec.clear();persist();refreshDone();updateStats();log('warn','tracking wiped');};
 $('#a-txt').onclick=()=>{if(!S.target){log('warn','lock a target first');return;}const lines=[...S.exec].map(k=>interp(DMAP[k][1]));const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([lines.join('\n')],{type:'text/plain'}));a.download=`nexus-executed-${S.target}.txt`;a.click();log('sys',`${lines.length} queries exported`);};
 document.addEventListener('keydown',e=>{if(e.key==='/'&&!/INPUT/.test(document.activeElement.tagName)){e.preventDefault();$('#target').focus();}});
 setInterval(()=>{$('#utc').textContent=new Date().toUTCString().slice(17,25)+' UTC';},1000);
 render();applyFilter();updateStats();
-[['sys',`RECON//NEXUS v3.0.0 WEB â€” ${TOTAL} payloads armed across ${CATS.length} vectors`],['info','engines: GOOGLE Â· BING Â· DDG Â· YANDEX Â· STARTPAGE'],['sys','awaiting target acquisition â€” lock a domain to begin']].forEach((b,i)=>setTimeout(()=>log(b[0],b[1]),300+i*340));
+[['sys',`RECON//NEXUS v3.0.0 WEB — ${TOTAL} payloads armed across ${CATS.length} vectors`],['info','engines: GOOGLE · BING · DDG · YANDEX · STARTPAGE'],['sys','awaiting target acquisition — lock a domain to begin']].forEach((b,i)=>setTimeout(()=>log(b[0],b[1]),300+i*340));
 const saved=localStorage.getItem('nx_target');if(saved){$('#target').value=saved;setTimeout(lock,1400);}
 </script>
 </body>

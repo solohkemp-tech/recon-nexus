@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""RECON//NEXUS v3.0.0 â€” CLI Â· zero-deps Â· no API keys Â· by empsolohk"""
+"""RECON//NEXUS v3.0.0 — CLI · zero-deps · no API keys · by empsolohk"""
 import argparse, json, random, re, socket, ssl, sys, threading, time, webbrowser
 import urllib.request, urllib.error, urllib.parse
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -16,7 +16,7 @@ SEVC={'critical':C.RED,'high':C.YLW,'medium':C.CYN,'low':C.GRN,'info':C.BLU}
 SEV_ORDER=['critical','high','medium','low','info']
 def badge(s): return f"{SEVC[s]}[{s.upper():^8}]{C.R}"
 def log(m,l='info'):
-    t={'info':f'{C.CYN}[*]','ok':f'{C.GRN}[+]','warn':f'{C.YLW}[!]','err':f'{C.RED}[x]','sys':f'{C.MAG}[Â·]'}[l]
+    t={'info':f'{C.CYN}[*]','ok':f'{C.GRN}[+]','warn':f'{C.YLW}[!]','err':f'{C.RED}[x]','sys':f'{C.MAG}[·]'}[l]
     print(f"  {t}{C.R} {m}")
 def hb(n):
     n=float(n)
@@ -131,7 +131,7 @@ INTERESTING_RE=re.compile(r'(admin|config|backup|\.env|\.git|\.sql|\.zip|\.bak|t
 TECH_SIGS=[('h','server',r'nginx[/ ]?([\d.]+)?','Nginx'),('h','server',r'Apache[/ ]?([\d.]+)?','Apache'),('h','server',r'Microsoft-IIS[/ ]?([\d.]+)?','IIS'),('h','x-powered-by',r'PHP[/ ]?([\d.]+)?','PHP'),('h','x-powered-by',r'ASP\.NET','ASP.NET'),('h','cf-ray',r'.*','Cloudflare'),('h','set-cookie',r'laravel_session','Laravel'),('h','set-cookie',r'PHPSESSID','PHP'),('b','',r'wp-content/','WordPress'),('b','',r'__NEXT_DATA__','Next.js'),('b','',r'ng-version','Angular'),('b','',r'jquery[.-]([\d.]+)?','jQuery')]
 
 def mod_dns(d,em,cfg):
-    log('resolving DNS (DoH + UDP fallback) â€¦','sys')
+    log('resolving DNS (DoH + UDP fallback) …','sys')
     recs={t:doh(d,t,cfg) for t in ('A','AAAA','MX','NS','TXT','SOA','CAA')}; recs['DMARC']=doh('_dmarc.'+d,'TXT',cfg)
     for t,v in recs.items():
         if v: print(f"  {C.B}{t:<7}{C.R}",end='')
@@ -140,7 +140,7 @@ def mod_dns(d,em,cfg):
     if not any('v=spf1' in str(x) for x in recs['TXT']): em.append(('dns','SPF missing','info','no SPF TXT'))
     if not recs['DMARC']: em.append(('dns','DMARC missing','info','no _dmarc TXT'))
 def mod_cert(d,em,cfg):
-    log('extracting TLS certificate â€¦','sys')
+    log('extracting TLS certificate …','sys')
     try:
         with socket.create_connection((d,443),timeout=cfg['timeout']) as sock:
             with cfg['ctx'].wrap_socket(sock,server_hostname=d) as ss:
@@ -148,12 +148,12 @@ def mod_cert(d,em,cfg):
         sans=[v for k,v in cert.get('subjectAltName',()) if k=='DNS']
         days=int((ssl.cert_time_to_seconds(cert['notAfter'])-time.time())/86400)
         issuer=dict(x[0] for x in cert.get('issuer',())).get('organizationName','?')
-        print(f"  {C.DIM}issuer{C.R}  {issuer}\n  {C.DIM}SANs{C.R}    {len(sans)}: {', '.join(sans[:10])}\n  {C.DIM}expiry{C.R}  {cert['notAfter']} ({days}d)\n  {C.DIM}proto{C.R}   {proto} Â· {cipher}")
+        print(f"  {C.DIM}issuer{C.R}  {issuer}\n  {C.DIM}SANs{C.R}    {len(sans)}: {', '.join(sans[:10])}\n  {C.DIM}expiry{C.R}  {cert['notAfter']} ({days}d)\n  {C.DIM}proto{C.R}   {proto} · {cipher}")
         if days<14: em.append(('cert','Cert expiring soon','medium',f'{days} days'))
         em.append(('cert',f'{len(sans)} SANs','info',', '.join(sans[:8])))
-    except Exception as e: log(f'cert failed â†’ {e}','err')
+    except Exception as e: log(f'cert failed → {e}','err')
 def mod_subs(d,em,cfg):
-    log('querying crt.sh CT logs â€¦','sys'); subs={}
+    log('querying crt.sh CT logs …','sys'); subs={}
     st,_,body,_=http_request(f'https://crt.sh/?q=%25.{d}&output=json',cfg,timeout=30)
     if st==200:
         try:
@@ -163,30 +163,30 @@ def mod_subs(d,em,cfg):
                         n=n.strip().lower().lstrip('*.')
                         if n.endswith(d) and DOMAIN_RE.match(n): subs.setdefault(n,set()).add('CT')
         except Exception: pass
-    log(f'CT â†’ {len(subs)} Â· DoH brute â†’ {len(WORDLIST)}','sys')
+    log(f'CT → {len(subs)} · DoH brute → {len(WORDLIST)}','sys')
     def chk(w):
         r=doh(f'{w}.{d}','A',cfg); return (f'{w}.{d}',r)
     with ThreadPoolExecutor(max_workers=25) as ex:
         for n,r in ex.map(chk,WORDLIST):
             if r: subs.setdefault(n,set()).add('DNS')
     names=sorted(subs)
-    for n in names: print(f"  {C.GRN}â–¸{C.R} {n}")
+    for n in names: print(f"  {C.GRN}▸{C.R} {n}")
     log(f'{len(names)} subdomains','ok'); em.append(('subs',f'{len(names)} subdomains','info',', '.join(names[:10])))
 def mod_wayback(d,em,cfg):
-    log('mining Wayback CDX â€¦','sys')
+    log('mining Wayback CDX …','sys')
     st,_,body,_=http_request(f'https://web.archive.org/cdx/search/cdx?url=*.{d}*&output=json&fl=original&collapse=urlkey&limit=2500',cfg,timeout=30)
     if st!=200: log('wayback unavailable','err'); return
     try: rows=json.loads(body)[1:]
     except Exception: rows=[]
     urls=[r[0] for r in rows]; hits=[u for u in urls if INTERESTING_RE.search(u)]
-    log(f'{len(urls)} archived Â· {len(hits)} interesting','ok')
+    log(f'{len(urls)} archived · {len(hits)} interesting','ok')
     for u in hits[:20]: print(f"  {C.DIM}{u[:108]}{C.R}")
     if hits: em.append(('wayback',f'{len(hits)} suspicious URLs','info','; '.join(hits[:6])))
 def mod_headers(d,em,cfg):
-    log('auditing security headers â€¦','sys')
+    log('auditing security headers …','sys')
     st,h,body,final=http_request(f'https://{d}/',cfg)
     if st is None: st,h,body,final=http_request(f'http://{d}/',cfg)
-    if st is None: log(f'unreachable â†’ {final}','err'); return
+    if st is None: log(f'unreachable → {final}','err'); return
     def miss(x,s,t): 
         if x not in h: em.append(('headers',t,s,f'missing {x}'))
     miss('strict-transport-security','medium','HSTS missing'); miss('content-security-policy','low','CSP missing')
@@ -203,9 +203,9 @@ def mod_headers(d,em,cfg):
         m=re.search(rx,hay,re.I)
         if m: tech.append(nm+(f' {m.group(1)}' if m.lastindex else ''))
     tech=list(dict.fromkeys(tech))
-    print(f"  {C.DIM}response{C.R} {st} â†’ {final[:70]}\n  {C.DIM}tech{C.R}     {', '.join(tech) or 'â€”'}")
+    print(f"  {C.DIM}response{C.R} {st} → {final[:70]}\n  {C.DIM}tech{C.R}     {', '.join(tech) or '—'}")
 def mod_probe(d,em,cfg,threads=25):
-    log(f'probing {len(PROBES)} paths Â· {threads} threads â€¦','sys'); base=f'https://{d}'
+    log(f'probing {len(PROBES)} paths · {threads} threads …','sys'); base=f'https://{d}'
     st0,_,_,_=http_request(base+'/',cfg,max_read=1024)
     if st0 is None: base=f'http://{d}'; st0,_,_,_=http_request(base+'/',cfg,max_read=1024)
     if st0 is None: log('unreachable','err'); return
@@ -222,45 +222,45 @@ def mod_probe(d,em,cfg,threads=25):
             if r: hits.append(r)
     hits.sort(key=lambda x:(SEV_ORDER.index(x[1]),-x[4]))
     for path,sev,label,st,size,loc in hits:
-        print(f"  {badge(sev)} {st} {path:<36} {C.DIM}{hb(size)}{C.R}"+(f" {C.MAG}â†’ {loc[:36]}{C.R}" if loc else ''))
-        em.append(('probe',f'{label} â†’ {path}',sev if st in (200,206,401) else 'info',f'{st} Â· {hb(size)}'))
+        print(f"  {badge(sev)} {st} {path:<36} {C.DIM}{hb(size)}{C.R}"+(f" {C.MAG}→ {loc[:36]}{C.R}" if loc else ''))
+        em.append(('probe',f'{label} → {path}',sev if st in (200,206,401) else 'info',f'{st} · {hb(size)}'))
     log(f'{len(hits)} live vectors','ok' if hits else 'info')
 def mod_passive(d,em,cfg):
     for i,(n,fn) in enumerate((('dns',mod_dns),('cert',mod_cert),('subs',mod_subs),('wayback',mod_wayback')),1):
-        log(f'phase {i}/4 â†’ {n.upper()}','sys')
+        log(f'phase {i}/4 → {n.upper()}','sys')
         try: fn(d,em,cfg)
-        except Exception as e: log(f'{n} failed â†’ {e}','err')
+        except Exception as e: log(f'{n} failed → {e}','err')
 def mod_full(d,em,cfg):
     mod_passive(d,em,cfg)
     for i,(n,fn) in enumerate((('headers',mod_headers),('probe',mod_probe)),5):
-        log(f'phase {i}/6 â†’ {n.upper()}','sys')
+        log(f'phase {i}/6 → {n.upper()}','sys')
         try: fn(d,em,cfg)
-        except Exception as e: log(f'{n} failed â†’ {e}','err')
+        except Exception as e: log(f'{n} failed → {e}','err')
 
 def report(d,em,args):
     from collections import Counter
     cnt=Counter(f[2] for f in em)
-    print(f"\n  {C.B}{C.CYN}â”â” MISSION DEBRIEF â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”{C.R}")
+    print(f"\n  {C.B}{C.CYN}━━ MISSION DEBRIEF ━━━━━━━━━━━━━━━━━━━━━━━━━━━{C.R}")
     for s in SEV_ORDER:
-        n=cnt.get(s,0); print(f"  {badge(s)} {SEVC[s]}{'â–ˆ'*min(n,40)}{C.R} {C.B}{n}{C.R}")
+        n=cnt.get(s,0); print(f"  {badge(s)} {SEVC[s]}{'█'*min(n,40)}{C.R} {C.B}{n}{C.R}")
     for f in sorted(em,key=lambda x:SEV_ORDER.index(x[2]))[:60]:
-        print(f"  {badge(f[2])} {C.B}{f[1]}{C.R} {C.DIM}Â· {f[0]} Â· {f[3][:60]}{C.R}")
+        print(f"  {badge(f[2])} {C.B}{f[1]}{C.R} {C.DIM}· {f[0]} · {f[3][:60]}{C.R}")
     if args.output:
         stamp=datetime.now().strftime('%Y%m%d-%H%M%S')
         rep={'meta':{'tool':'RECON//NEXUS','version':VERSION,'author':'empsolohk','generated':datetime.now().isoformat(),'target':d},'summary':{s:cnt.get(s,0) for s in SEV_ORDER},'findings':[{'module':m,'title':t,'severity':s,'detail':dt} for m,t,s,dt in em]}
         jf=f"{args.output}-{d}-{stamp}.json"
         with open(jf,'w',encoding='utf-8') as f: json.dump(rep,f,indent=2,ensure_ascii=False)
-        log(f'report â†’ {jf}','ok')
+        log(f'report → {jf}','ok')
 
 def ensure_auth(yes):
     if yes: return True
-    print(f"  {C.YLW}â•­â”€ Active scanning without written authorization is illegal. â•®\n  â•°â”€ Only proceed on targets you own or are contracted to test.{C.R}")
-    try: a=input(f"\n  {C.YLW}â–¸ I have authorization [yes/N]: {C.R}").strip().lower()
+    print(f"  {C.YLW}╭─ Active scanning without written authorization is illegal. ╮\n  ╰─ Only proceed on targets you own or are contracted to test.{C.R}")
+    try: a=input(f"\n  {C.YLW}▸ I have authorization [yes/N]: {C.R}").strip().lower()
     except (EOFError,KeyboardInterrupt): return False
     return a in ('y','yes')
 
 def main():
-    p=argparse.ArgumentParser(prog='nexus',description='RECON//NEXUS CLI Â· by empsolohk',epilog='by empsolohk Â· authorized targets only')
+    p=argparse.ArgumentParser(prog='nexus',description='RECON//NEXUS CLI · by empsolohk',epilog='by empsolohk · authorized targets only')
     p.add_argument('cmd',choices=['full','passive','dns','cert','subs','wayback','headers','probe','dorks'])
     p.add_argument('domain',nargs='?')
     p.add_argument('--threads',type=int,default=25); p.add_argument('--timeout',type=int,default=10)
@@ -272,14 +272,14 @@ def main():
     p.add_argument('--open',action='store_true'); p.add_argument('--limit',type=int,default=8)
     args=p.parse_args()
     if args.no_color or not sys.stdout.isatty(): C.disable()
-    print(f"\n  {C.GRN}â–„â–„â–„â–„â–„â–„â–„â–„â–„â–„â–„â–„â–„â–„â–„â–„â–„â–„â–„â–„â–„â–„â–„â–„â–„â–„â–„â–„â–„â–„â–„â–„â–„â–„â–„â–„â–„â–„{C.R}\n  {C.GRN}â–ˆ{C.R} {C.B}RECON//NEXUS{C.R} v{VERSION} Â· {N_DORKS} payloads Â· by empsolohk\n  {C.GRN}â–€â–€â–€â–€â–€â–€â–€â–€â–€â–€â–€â–€â–€â–€â–€â–€â–€â–€â–€â–€â–€â–€â–€â–€â–€â–€â–€â–€â–€â–€â–€â–€â–€â–€â–€â–€â–€â–€{C.R}\n")
+    print(f"\n  {C.GRN}▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄{C.R}\n  {C.GRN}█{C.R} {C.B}RECON//NEXUS{C.R} v{VERSION} · {N_DORKS} payloads · by empsolohk\n  {C.GRN}▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀{C.R}\n")
     cfg={'timeout':args.timeout,'proxy':args.proxy,'ua':args.ua or DEFAULT_UA,'ctx':ssl._create_unverified_context() if args.insecure else ssl.create_default_context()}
     if args.cmd=='dorks':
         d=norm(args.domain) if args.domain else None; opened=0; total=0
         for cat,dorks in DORKS:
             rows=[x for x in dorks if not args.severity or x[2]==args.severity]
             if not rows: continue
-            print(f"\n  {C.B}{C.CYN}â”Œâ”€ {cat}{C.R} {C.CYN}{'â”'*max(2,38-len(cat))}{C.R}")
+            print(f"\n  {C.B}{C.CYN}┌─ {cat}{C.R} {C.CYN}{'━'*max(2,38-len(cat))}{C.R}")
             for label,q,sev in rows:
                 total+=1; print(f"  {badge(sev)} {label:<22} {C.DIM}{q.replace('{t}',d or '{TARGET}')[:80]}{C.R}")
                 if args.open and d and opened<args.limit:
@@ -287,13 +287,13 @@ def main():
         log(f'{total} payloads','ok'); return
     if not args.domain: log('domain required','err'); sys.exit(1)
     d=norm(args.domain)
-    if not DOMAIN_RE.match(d): log(f'invalid domain â†’ {d}','err'); sys.exit(1)
+    if not DOMAIN_RE.match(d): log(f'invalid domain → {d}','err'); sys.exit(1)
     em=[]
     active={'full','headers','probe'}
-    if args.cmd in active and not ensure_auth(args.yes): log('blocked â€” no authorization','warn'); return
+    if args.cmd in active and not ensure_auth(args.yes): log('blocked — no authorization','warn'); return
     {'full':mod_full,'passive':mod_passive,'dns':mod_dns,'cert':mod_cert,'subs':mod_subs,'wayback':mod_wayback,'headers':mod_headers,'probe':mod_probe}[args.cmd](d,em,cfg)
     report(d,em,args)
-    print(f"\n  {C.DIM}â•°â”€ RECON//NEXUS v{VERSION} Â· by empsolohk Â· authorized use only{C.R}\n")
+    print(f"\n  {C.DIM}╰─ RECON//NEXUS v{VERSION} · by empsolohk · authorized use only{C.R}\n")
 
 if __name__=='__main__':
     try: main()
