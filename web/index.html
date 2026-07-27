@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>RECON//NEXUS â€” Smart Pentest Recon Engine</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg0:#070c14;--panel:#0c1424;--panel2:#0a1120;--line:#182741;--line2:#243a61;--txt:#c7d5ee;--dim:#5c7195;--bright:#eef4ff;--grn:#2ee6a8;--cyn:#45c8ff;--amb:#ffb545;--red:#ff5470;--mag:#c77dff;--blu:#6ea8ff;--mono:'JetBrains Mono',Consolas,monospace;--disp:'Chakra Petch',sans-serif}
+body{background:radial-gradient(1000px 520px at 88% -8%,rgba(69,200,255,.07),transparent 60%),radial-gradient(900px 640px at -8% 108%,rgba(46,230,168,.06),transparent 60%),var(--bg0);color:var(--txt);font-family:var(--mono);font-size:13px;min-height:100vh}
+body::before{content:"";position:fixed;inset:0;background-image:linear-gradient(rgba(90,130,200,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(90,130,200,.045) 1px,transparent 1px);background-size:44px 44px;pointer-events:none}
+.scanlines{position:fixed;inset:0;pointer-events:none;z-index:999;background:repeating-linear-gradient(0deg,transparent 0 2px,rgba(0,0,0,.14) 2px 3px);opacity:.35}
+::selection{background:rgba(46,230,168,.25)}
+::-webkit-scrollbar{width:9px}::-webkit-scrollbar-track{background:var(--bg0)}::-webkit-scrollbar-thumb{background:var(--line2)}
+header{position:sticky;top:0;z-index:50;display:flex;align-items:center;gap:16px;padding:12px 22px;background:rgba(7,12,20,.95);border-bottom:1px solid var(--line)}
+.logo{display:flex;align-items:center;gap:12px}
+.radar{width:34px;height:34px;border:1px solid rgba(46,230,168,.6);border-radius:50%;position:relative;flex:none}
+.radar::before{content:"";position:absolute;inset:6px;border:1px solid rgba(46,230,168,.25);border-radius:50%}
+.radar::after{content:"";position:absolute;inset:0;border-radius:50%;background:conic-gradient(from 0deg,rgba(46,230,168,.55),transparent 70deg);animation:spin 3.2s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.brand h1{font-family:var(--disp);font-size:19px;font-weight:700;letter-spacing:1.5px;color:var(--bright)}
+.brand h1 b{color:var(--grn)}
+.brand small{display:block;font-size:9px;letter-spacing:2.5px;color:var(--dim)}
+.hspace{flex:1}
+.hstat{display:flex;align-items:center;gap:8px;font-size:10px;letter-spacing:1px;color:var(--dim);border:1px solid var(--line);padding:7px 11px}
+.wrap{max-width:1480px;margin:0 auto;padding:22px;position:relative;z-index:1}
+.console{border:1px solid var(--line);background:linear-gradient(180deg,var(--panel),var(--panel2));padding:18px 20px;position:relative;margin-bottom:18px}
+.console::before,.console::after{content:"";position:absolute;width:12px;height:12px}
+.console::before{top:-1px;left:-1px;border-top:1px solid var(--grn);border-left:1px solid var(--grn)}
+.console::after{bottom:-1px;right:-1px;border-bottom:1px solid var(--grn);border-right:1px solid var(--grn)}
+.console-tag{font-size:9px;letter-spacing:2.5px;color:var(--grn);margin-bottom:13px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.console-tag .scope{color:var(--amb)}
+.promptline{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.prompt{color:var(--grn);font-weight:700;font-size:13px;white-space:nowrap}
+.prompt span{color:var(--dim);font-weight:400}
+#target{flex:1;min-width:220px;background:#060b15;border:1px solid var(--line2);color:var(--bright);font-family:var(--mono);font-size:15px;padding:11px 14px;outline:none;transition:.25s;caret-color:var(--grn)}
+#target:focus{border-color:var(--grn);box-shadow:0 0 0 1px rgba(46,230,168,.35)}
+.lock{font-family:var(--disp);font-weight:700;letter-spacing:2px;font-size:12px;color:#04120c;background:var(--grn);border:none;padding:12px 22px;cursor:pointer;transition:.2s}
+.lock:hover{box-shadow:0 0 22px rgba(46,230,168,.5)}
+.ghost{font-family:var(--mono);font-size:10px;letter-spacing:1.5px;background:none;border:1px solid var(--line2);color:var(--dim);padding:11px 16px;cursor:pointer}
+.ghost:hover{color:var(--red);border-color:var(--red)}
+.hint{margin-top:11px;font-size:10px;color:var(--dim)}
+.hint kbd{border:1px solid var(--line2);padding:1px 6px;color:var(--cyn)}
+.workspace{display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:18px;align-items:start}
+.filterbar{position:sticky;top:63px;z-index:40;display:flex;gap:9px;align-items:center;flex-wrap:wrap;border:1px solid var(--line);background:rgba(10,17,32,.97);padding:10px 14px;margin-bottom:16px}
+#filter{flex:1;min-width:170px;background:#060b15;border:1px solid var(--line);color:var(--txt);padding:8px 12px;font-family:var(--mono);font-size:12px;outline:none}
+#filter:focus{border-color:var(--cyn)}
+.chip{font-size:9px;letter-spacing:1.5px;padding:6px 10px;border:1px solid var(--line2);color:var(--dim);cursor:pointer;user-select:none;transition:.18s}
+.chip:hover{color:var(--bright)}
+.chip[data-sev="all"].on{color:var(--bright);border-color:var(--dim)}
+.chip[data-sev="critical"].on{color:var(--red);border-color:var(--red)}
+.chip[data-sev="high"].on{color:var(--amb);border-color:var(--amb)}
+.chip[data-sev="medium"].on{color:var(--cyn);border-color:var(--cyn)}
+.chip[data-sev="low"].on{color:var(--grn);border-color:var(--grn)}
+.chip[data-sev="info"].on{color:var(--blu);border-color:var(--blu)}
+#engine{background:#060b15;border:1px solid var(--line2);color:var(--cyn);font-family:var(--mono);font-size:10px;padding:7px 9px;outline:none;cursor:pointer}
+#viscount{font-size:10px;color:var(--dim)}
+.cat{border:1px solid var(--line);background:linear-gradient(180deg,var(--panel),var(--panel2));margin-bottom:16px}
+.cat.empty{display:none}
+.cat-h{display:flex;align-items:center;gap:12px;padding:13px 16px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.cat-idx{font-family:var(--disp);font-weight:700;font-size:15px;color:var(--acc)}
+.cat-h h2{font-family:var(--disp);font-size:13.5px;font-weight:600;letter-spacing:2px;color:var(--bright)}
+.cat-meta{font-size:9.5px;letter-spacing:1.5px;color:var(--dim)}
+.cat-meta b{color:var(--acc)}
+.cat-acts{margin-left:auto;display:flex;gap:8px}
+.cbtn{font-family:var(--mono);font-size:9px;letter-spacing:1.5px;padding:6px 10px;background:none;border:1px solid var(--line2);color:var(--dim);cursor:pointer;transition:.18s}
+.cbtn:hover{color:var(--acc);border-color:var(--acc)}
+.cat.closed .cat-b{display:none}
+.dork{display:grid;grid-template-columns:66px minmax(0,1fr) auto auto;gap:12px;align-items:center;padding:9px 16px;border-left:2px solid transparent;border-bottom:1px solid rgba(24,39,65,.55);transition:.18s}
+.dork:last-child{border-bottom:none}
+.dork:hover{background:rgba(69,200,255,.04);border-left-color:var(--sc);transform:translateX(3px)}
+.dork.hide{display:none}
+.dork[data-sev="critical"]{--sc:var(--red)}.dork[data-sev="high"]{--sc:var(--amb)}.dork[data-sev="medium"]{--sc:var(--cyn)}.dork[data-sev="low"]{--sc:var(--grn)}.dork[data-sev="info"]{--sc:var(--blu)}
+.sev{font-size:8.5px;font-weight:700;letter-spacing:1.5px;text-align:center;padding:3px 0;border:1px solid var(--sc);color:var(--sc)}
+.dlabel{font-family:var(--disp);font-size:12px;font-weight:600;color:var(--txt)}
+.direct{font-style:normal;font-size:8px;color:var(--mag);border:1px solid rgba(199,125,255,.4);padding:1px 4px;margin-left:6px}
+.dq{display:block;font-size:10.5px;color:var(--dim);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dork:hover .dq{color:var(--cyn)}
+.dbtn{font-family:var(--mono);font-size:9px;letter-spacing:1px;padding:6px 11px;background:none;border:1px solid var(--line2);color:var(--dim);cursor:pointer;transition:.18s;white-space:nowrap}
+.dbtn.copy:hover{color:var(--grn);border-color:var(--grn)}
+.dbtn.run:hover{color:var(--cyn);border-color:var(--cyn)}
+.side{display:flex;flex-direction:column;gap:16px;position:sticky;top:63px}
+.panel{border:1px solid var(--line);background:linear-gradient(180deg,var(--panel),var(--panel2));padding:15px 16px;position:relative}
+.panel::before,.panel::after{content:"";position:absolute;width:11px;height:11px}
+.panel::before{top:-1px;left:-1px;border-top:1px solid var(--grn);border-left:1px solid var(--grn)}
+.panel::after{bottom:-1px;right:-1px;border-bottom:1px solid var(--grn);border-right:1px solid var(--grn)}
+.ptitle{font-family:var(--disp);font-size:10px;font-weight:600;letter-spacing:2.5px;color:var(--grn);margin-bottom:13px;display:flex;align-items:center;gap:8px}
+.ptitle::after{content:"";flex:1;height:1px;background:var(--line)}
+.stat-target{border:1px solid var(--line);background:#060b15;padding:9px 12px;margin-bottom:12px}
+.stat-target small{font-size:8.5px;letter-spacing:2px;color:var(--dim)}
+.stat-target div{font-size:15px;font-weight:700;color:var(--grn);word-break:break-all}
+.sgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.stat{border:1px solid var(--line);padding:9px 11px}
+.stat small{font-size:8.5px;letter-spacing:1.8px;color:var(--dim);display:block;margin-bottom:4px}
+.stat b{font-family:var(--disp);font-size:23px;font-weight:700;line-height:1}
+.stat.s1 b{color:var(--cyn)}.stat.s2 b{color:var(--grn)}.stat.s3 b{color:var(--amb)}.stat.s4 b{color:var(--mag)}
+#log{height:280px;overflow-y:auto;font-size:10.5px;line-height:1.75}
+.ln{animation:login .3s ease both}
+@keyframes login{from{opacity:0;transform:translateX(-8px)}}
+.ln .t{color:var(--dim)}
+.ln.sys{color:var(--grn)}.ln.info{color:var(--cyn)}.ln.warn{color:var(--amb)}.ln.err{color:var(--red)}
+.abtn{display:block;width:100%;text-align:left;font-family:var(--mono);font-size:10px;letter-spacing:1.5px;padding:10px 12px;background:none;border:1px solid var(--line2);color:var(--txt);cursor:pointer;margin-bottom:8px;transition:.18s}
+.abtn span{float:right;color:var(--dim)}
+.abtn:hover{transform:translateX(3px)}
+.abtn.a1:hover{border-color:var(--grn);color:var(--grn)}
+.abtn.a2:hover{border-color:var(--cyn);color:var(--cyn)}
+.abtn.a3:hover{border-color:var(--amb);color:var(--amb)}
+footer{border-top:1px solid var(--line);margin-top:26px;padding:18px 22px;display:flex;gap:16px;flex-wrap:wrap;align-items:center;justify-content:space-between;font-size:10px;letter-spacing:1px;color:var(--dim)}
+footer a{color:var(--cyn);text-decoration:none}
+.ethic{color:var(--amb)}
+@media(max-width:1100px){.workspace{grid-template-columns:1fr}.side{position:static}.filterbar{position:static}}
+@media(max-width:720px){header{flex-wrap:wrap}.dork{grid-template-columns:56px minmax(0,1fr) auto auto}.cat-acts{margin-left:0;width:100%}}
+</style>
+</head>
+<body>
+<div class="scanlines"></div>
+<header>
+  <div class="logo"><div class="radar"></div>
+    <div class="brand"><h1>RECON<b>//</b>NEXUS</h1><small>SMART PENTEST RECON ENGINE Â· v3.0.0 Â· WEB</small></div>
+  </div>
+  <div class="hspace"></div>
+  <div class="hstat"><span id="scope-txt">SCOPE: â€”</span></div>
+  <div class="hstat">UTC <span id="utc">--:--:--</span></div>
+</header>
+<div class="wrap">
+  <section class="console">
+    <div class="console-tag"><span>â–TARGET ACQUISITION</span><span class="scope">âš  AUTHORIZED SCOPE ONLY</span></div>
+    <div class="promptline">
+      <span class="prompt">root@nexus:~$ <span>./acquire --domain</span></span>
+      <input id="target" type="text" placeholder="target-domain.com" spellcheck="false" autocomplete="off"/>
+      <button class="lock" id="lockbtn">LOCK TARGET</button>
+      <button class="ghost" id="clearbtn">CLEAR</button>
+    </div>
+    <div class="hint">press <kbd>/</kbd> to focus Â· <kbd>ENTER</kbd> to lock Â· all payloads re-arm automatically</div>
+  </section>
+  <div class="workspace">
+    <div class="main-col">
+      <div class="filterbar">
+        <input id="filter" placeholder="â–¸ filter payloadsâ€¦"/>
+        <span class="chip on" data-sev="all">ALL</span>
+        <span class="chip" data-sev="critical">CRITICAL</span>
+        <span class="chip" data-sev="high">HIGH</span>
+        <span class="chip" data-sev="medium">MEDIUM</span>
+        <span class="chip" data-sev="low">LOW</span>
+        <span class="chip" data-sev="info">INFO</span>
+        <select id="engine">
+          <option value="google">GOOGLE</option><option value="bing">BING</option>
+          <option value="duckduckgo">DUCKDUCKGO</option><option value="yandex">YANDEX</option>
+          <option value="startpage">STARTPAGE</option>
+        </select>
+        <span id="viscount"></span>
+      </div>
+      <div id="cats"></div>
+    </div>
+    <aside class="side">
+      <div class="panel">
+        <div class="ptitle">MISSION TELEMETRY</div>
+        <div class="stat-target"><small>LOCKED TARGET</small><div id="st-target">â€”</div></div>
+        <div class="sgrid">
+          <div class="stat s1"><small>PAYLOADS</small><b id="st-armed">0</b></div>
+          <div class="stat s2"><small>EXECUTED</small><b id="st-exec">0</b></div>
+          <div class="stat s3"><small>COPIED</small><b id="st-copied">0</b></div>
+          <div class="stat s4"><small>VECTORS</small><b id="st-cats">0</b></div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="ptitle">OPS LOG â€” LIVE FEED</div>
+        <div id="log"></div>
+      </div>
+      <div class="panel">
+        <div class="ptitle">QUICK ACTIONS</div>
+        <button class="abtn a1" id="a-txt">EXPORT EXECUTED <span>.TXT</span></button>
+        <button class="abtn a3" id="a-reset">RESET TRACKING <span>WIPE</span></button>
+      </div>
+    </aside>
+  </div>
+  <footer>
+    <span>RECON//NEXUS v3.0.0 â€” engineered for authorized reconnaissance only</span>
+    <span class="ethic">âš  Use exclusively on systems you own or have written permission to test</span>
+    <span>by <b>empsolohk</b> Â· concept by <a href="https://www.linkedin.com/in/boopathi-s/" target="_blank" rel="noopener">Boopathi S</a></span>
+  </footer>
+</div>
+<script>
+const $=s=>document.querySelector(s),$$=s=>document.querySelectorAll(s);
+const ENGINES={google:'https://www.google.com/search?q=',bing:'https://www.bing.com/search?q=',duckduckgo:'https://duckduckgo.com/?q=',yandex:'https://yandex.com/search/?text=',startpage:'https://www.startpage.com/sp/search?query='};
+const CATS=[
+{name:'File & Directory Discovery',acc:'#2ee6a8',dorks:[
+ ['Directory listing','intitle:"index of /" site:{t}','high'],['Exposed config files','site:{t} ext:cfg OR ext:conf OR ext:ini OR ext:config','high'],
+ ['Exposed database files','site:{t} ext:sql OR ext:db OR ext:dbf OR ext:mdb','critical'],['Exposed log files','site:{t} ext:log','medium'],
+ ['Backup & old files','site:{t} ext:bak OR ext:backup OR ext:old OR ext:orig OR ext:zip OR ext:tar.gz','high'],['Public documents','site:{t} ext:doc OR ext:docx OR ext:pdf OR ext:xlsx','low'],
+ ['Admin backup archives','inurl:admin site:{t} ext:zip OR ext:sql OR ext:bak','critical'],['WordPress config','site:{t} inurl:wp-config','critical'],
+ ['Exposed .git','site:{t} inurl:".git"','critical'],['Exposed .env','site:{t} ext:env','critical'],
+ ['Private key files','site:{t} ext:pem OR ext:key OR ext:ppk "PRIVATE KEY"','critical'],['SSH id_rsa','site:{t} intitle:"index of" "id_rsa"','critical'],
+ ['Password / shadow','site:{t} intitle:"index of" passwd OR passwords.txt OR shadow','critical']]},
+{name:'Web Application Discovery',acc:'#45c8ff',dorks:[
+ ['Login pages','site:{t} inurl:login OR inurl:signin OR inurl:wp-login','info'],['SQL error leakage','site:{t} "SQL syntax" OR "MySQL server version" OR "ORA-01756"','high'],
+ ['phpinfo()','site:{t} intitle:"phpinfo()"','high'],['Backdoor shells','site:{t} inurl:shell.php OR inurl:c99 OR inurl:r57 OR inurl:b374k','critical'],
+ ['Open redirects','site:{t} inurl:redirect= OR inurl:return= OR inurl:next= OR inurl:url=','medium'],['Admin portals','site:{t} inurl:admin OR inurl:administrator OR inurl:dashboard','info'],
+ ['Upload pages','site:{t} inurl:upload.php OR inurl:uploader','high'],['Debug / stack traces','site:{t} "stack trace" OR "fatal error" OR intitle:"Server Error"','medium'],
+ ['phpMyAdmin','site:{t} intitle:"phpMyAdmin"','high'],['Test / staging / dev','site:{t} inurl:test OR inurl:staging OR inurl:dev.','low']]},
+{name:'Information Gathering',acc:'#c77dff',dorks:[
+ ['Pastebin entries','site:pastebin.com "{t}"','high'],['LinkedIn employees','site:linkedin.com/in "{t}"','low'],
+ ['Sensitive text files','site:{t} ext:txt password OR secret OR token','high'],['Subdomains','site:*.{t}','medium'],
+ ['Certificate transparency','https://crt.sh/?q=%25.{t}','info',1],['GitHub mentions','site:github.com "{t}"','medium'],
+ ['Email harvest','site:{t} "@{t}"','medium'],['S3 mentions','site:s3.amazonaws.com "{t}"','medium']]},
+{name:'Cloud & Infrastructure',acc:'#ffb545',dorks:[
+ ['HackerOne reports','site:hackerone.com "{t}"','info'],['Censys search','https://search.censys.io/search?query={t}','info',1],
+ ['Shodan search','https://www.shodan.io/search?query={t}','info',1],['Jenkins','site:{t} intitle:"Dashboard [Jenkins]"','high'],
+ ['Kibana','site:{t} intitle:"Kibana"','high'],['AWS S3 buckets','site:{t}.s3.amazonaws.com','high'],
+ ['Kubernetes dashboard','site:{t} intitle:"Kubernetes Dashboard"','critical'],['Exposed Docker API','site:{t} inurl:":2375"','critical'],
+ ['MongoDB','site:{t} inurl:":27017"','critical'],['Jupyter notebooks','site:{t} intitle:"Jupyter Notebook"','high'],
+ ['Grafana','site:{t} intitle:"Grafana"','medium'],['SonarQube','site:{t} intitle:"SonarQube"','high']]},
+{name:'API & Development',acc:'#6ea8ff',dorks:[
+ ['GitHub secrets','site:github.com "{t}" password OR secret OR api_key OR token','critical'],['GraphQL endpoints','site:{t} inurl:graphql','high'],
+ ['API keys & secrets','site:{t} "api_key" OR "apikey" OR "secret_key" OR "access_token"','critical'],['Spring actuator','site:{t} inurl:actuator','high'],
+ ['Actuator /env dump','site:{t} inurl:actuator/env','critical'],['Env with secrets','site:{t} ext:env DB_PASSWORD OR API_KEY OR SECRET','critical'],
+ ['Swagger / api-docs','site:{t} inurl:swagger OR inurl:api-docs','medium'],['SQL query in URL','site:{t} inurl:.php?id=','high'],
+ ['YAML with secrets','site:{t} ext:yaml OR ext:yml password OR secret','high'],['JIRA dashboards','site:{t} inurl:jira OR site:{t}.atlassian.net','medium']]},
+{name:'Modern Platforms & CI/CD',acc:'#ff8f5e',dorks:[
+ ['n8n automation','site:{t} intitle:"n8n"','high'],['Ray dashboard','site:{t} intitle:"Ray Dashboard"','critical'],
+ ['Argo CD','site:{t} intitle:"Argo CD"','high'],['Portainer','site:{t} intitle:"Portainer"','high'],
+ ['Weave Scope','site:{t} intitle:"Weave Scope"','critical'],['K8s API anonymous','site:{t} inurl:"/api/v1/namespaces"','critical'],
+ ['Mongo Express','site:{t} intitle:"Mongo Express"','critical'],['Laravel Ignition','site:{t} inurl:"_ignition/health-check"','critical'],
+ ['VMware vCenter','site:{t} intitle:"vCenter"','critical'],['Zabbix','site:{t} intitle:"Zabbix"','high']]},
+{name:'Archives & Historical',acc:'#ff5470',dorks:[
+ ['crossdomain.xml','site:{t} inurl:crossdomain.xml','medium'],['Archive.org history','https://web.archive.org/web/*/{t}','info',1],
+ ['Direct downloads','site:{t} ext:apk OR ext:exe OR ext:msi OR ext:ipa','medium'],['Exposed /etc','site:{t} inurl:"/etc/"','high'],
+ ['VirusTotal','https://www.virustotal.com/gui/domain/{t}','info',1],['urlscan.io','https://urlscan.io/domain/{t}','info',1],
+ ['Wayback CDX index','https://web.archive.org/cdx/search/cdx?url=*.{t}*&output=text&fl=original&collapse=urlkey','medium',1]]}
+];
+const DMAP={};CATS.forEach(c=>c.dorks.forEach((d,i)=>DMAP[c.name+'#'+i]=d));
+const TOTAL=CATS.reduce((a,c)=>a+c.dorks.length,0);
+const S={target:'',engine:'google',exec:new Set(JSON.parse(localStorage.getItem('nx_exec')||'[]')),copied:0,sevs:new Set()};
+const interp=q=>q.replaceAll('{t}',S.target||'{TARGET}');
+const esc=s=>String(s).replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
+function rowHTML(d,key){const[label,q,sev,direct]=d;return `<div class="dork" data-key="${key}" data-sev="${sev}" data-search="${esc((label+' '+q).toLowerCase())}"><span class="sev">${sev.toUpperCase()}</span><div><span class="dlabel">${esc(label)}${direct?'<i class="direct">DIRECT</i>':''}</span><code class="dq">${esc(interp(q))}</code></div><button class="dbtn copy" data-act="copy">COPY</button><button class="dbtn run" data-act="run">RUN â†—</button></div>`;}
+function render(){$('#cats').innerHTML=CATS.map((c,i)=>`<section class="cat" data-name="${c.name}" style="--acc:${c.acc}"><header class="cat-h"><span class="cat-idx">${String(i+1).padStart(2,'0')}</span><h2>${c.name.toUpperCase()}</h2><span class="cat-meta"><b class="cat-vis">${c.dorks.length}</b> SHOWN</span><div class="cat-acts"><button class="cbtn" data-act="copyall">COPY ALL</button><button class="cbtn" data-act="toggle">â–¾</button></div></header><div class="cat-b">${c.dorks.map((d,j)=>rowHTML(d,c.name+'#'+j)).join('')}</div></section>`).join('');refreshDone();}
+function log(type,msg){const el=$('#log'),ts=new Date().toTimeString().slice(0,8);const d=document.createElement('div');d.className='ln '+type;d.innerHTML=`<span class="t">[${ts}]</span> â–¸ ${esc(msg)}`;el.appendChild(d);el.scrollTop=el.scrollHeight;}
+function refreshDone(){$$('.dork').forEach(r=>{const on=S.exec.has(r.dataset.key);r.classList.toggle('done',on);r.querySelector('.run').textContent=on?'âœ“ DONE':'RUN â†—';});}
+const persist=()=>localStorage.setItem('nx_exec',JSON.stringify([...S.exec]));
+function copyText(t){if(navigator.clipboard)navigator.clipboard.writeText(t).catch(()=>{});else{const a=document.createElement('textarea');a.value=t;document.body.appendChild(a);a.select();document.execCommand('copy');a.remove();}}
+function flash(b,t){const o=b.textContent;b.textContent=t;setTimeout(()=>b.textContent=o,1100);}
+function runDork(key){const d=DMAP[key];if(!S.target){log('warn','no target locked');$('#target').focus();return;}const url=d[3]?interp(d[1]):ENGINES[S.engine]+encodeURIComponent(interp(d[1]));window.open(url,'_blank','noopener');S.exec.add(key);persist();const r=document.querySelector(`.dork[data-key="${CSS.escape(key)}"]`);r.classList.add('done');r.querySelector('.run').textContent='âœ“ DONE';log('sys',`executed â†’ ${d[0]} [${d[2].toUpperCase()}]`);updateStats();}
+function updateStats(){$('#st-armed').textContent=TOTAL;$('#st-exec').textContent=S.exec.size;$('#st-copied').textContent=S.copied;$('#st-cats').textContent=CATS.length;}
+function lock(){const v=$('#target').value.trim().toLowerCase().replace(/^https?:\/\//,'').split('/')[0];if(!/^([a-z0-9]([a-z0-9-]*[a-z0-9])?\.)+[a-z]{2,}$/.test(v)){log('err',`invalid target â†’ "${v||'âˆ…'}"`);return;}S.target=v;$$('.dq').forEach((el)=>{});CATS.forEach(c=>c.dorks.forEach((d,j)=>{document.querySelector(`.dork[data-key="${CSS.escape(c.name+'#'+j)}"] .dq`).textContent=interp(d[1]);}));$('#st-target').textContent=v;$('#scope-txt').textContent='SCOPE: '+v;log('sys',`TARGET LOCKED â†’ ${v} Â· ${TOTAL} payloads re-armed`);updateStats();}
+function applyFilter(){const term=$('#filter').value.trim().toLowerCase();let vis=0;$$('.dork').forEach(r=>{const ok=(!term||r.dataset.search.includes(term))&&(!S.sevs.size||S.sevs.has(r.dataset.sev));r.classList.toggle('hide',!ok);if(ok)vis++;});$$('.cat').forEach(c=>{const n=c.querySelectorAll('.dork:not(.hide)').length;c.classList.toggle('empty',n===0);c.querySelector('.cat-vis').textContent=n;});$('#viscount').textContent=`${vis}/${TOTAL}`;}
+$('#cats').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const act=b.dataset.act;if(act==='toggle'){const c=b.closest('.cat');c.classList.toggle('closed');b.textContent=c.classList.contains('closed')?'â–¸':'â–¾';return;}if(act==='copyall'){const cat=CATS.find(x=>x.name===b.closest('.cat').dataset.name);if(!S.target){log('warn','no target locked');return;}copyText(cat.dorks.map(d=>interp(d[1])).join('\n'));S.copied+=cat.dorks.length;log('sys',`${cat.dorks.length} queries copied`);flash(b,'âœ“ COPIED');updateStats();return;}const row=b.closest('.dork');if(!row)return;const d=DMAP[row.dataset.key];if(act==='copy'){copyText(interp(d[1]));S.copied++;log('info',`copied â†’ ${d[0]}`);flash(b,'âœ“');updateStats();}if(act==='run')runDork(row.dataset.key);});
+$('#lockbtn').onclick=lock;$('#target').addEventListener('keydown',e=>{if(e.key==='Enter')lock();});
+$('#clearbtn').onclick=()=>{S.target='';$('#target').value='';$('#st-target').textContent='â€”';$('#scope-txt').textContent='SCOPE: â€”';log('warn','target released');};
+$('#filter').addEventListener('input',applyFilter);
+$$('.chip').forEach(ch=>ch.addEventListener('click',()=>{const sev=ch.dataset.sev;if(sev==='all'){S.sevs.clear();$$('.chip').forEach(c=>c.classList.remove('on'));ch.classList.add('on');}else{$('.chip[data-sev="all"]').classList.remove('on');ch.classList.toggle('on');ch.classList.contains('on')?S.sevs.add(sev):S.sevs.delete(sev);}applyFilter();}));
+$('#engine').onchange=e=>{S.engine=e.target.value;log('info',`engine â†’ ${S.engine.toUpperCase()}`);};
+$('#a-reset').onclick=()=>{S.exec.clear();persist();refreshDone();updateStats();log('warn','tracking wiped');};
+$('#a-txt').onclick=()=>{if(!S.target){log('warn','lock a target first');return;}const lines=[...S.exec].map(k=>interp(DMAP[k][1]));const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([lines.join('\n')],{type:'text/plain'}));a.download=`nexus-executed-${S.target}.txt`;a.click();log('sys',`${lines.length} queries exported`);};
+document.addEventListener('keydown',e=>{if(e.key==='/'&&!/INPUT/.test(document.activeElement.tagName)){e.preventDefault();$('#target').focus();}});
+setInterval(()=>{$('#utc').textContent=new Date().toUTCString().slice(17,25)+' UTC';},1000);
+render();applyFilter();updateStats();
+[['sys',`RECON//NEXUS v3.0.0 WEB â€” ${TOTAL} payloads armed across ${CATS.length} vectors`],['info','engines: GOOGLE Â· BING Â· DDG Â· YANDEX Â· STARTPAGE'],['sys','awaiting target acquisition â€” lock a domain to begin']].forEach((b,i)=>setTimeout(()=>log(b[0],b[1]),300+i*340));
+const saved=localStorage.getItem('nx_target');if(saved){$('#target').value=saved;setTimeout(lock,1400);}
+</script>
+</body>
+</html>
