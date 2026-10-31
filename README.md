@@ -131,6 +131,8 @@ recon-nexus/
 
 ## Contributing
 
+See the [contribution guide](CONTRIBUTING.md) for issue and pull-request guidance.
+
 Share reproducible bug reports, accessibility suggestions, documentation corrections or feature requests in [GitHub Issues](https://github.com/solohkemp-tech/recon-nexus/issues). Please redact private customer data and credentials. For vulnerabilities, follow [SECURITY.md](SECURITY.md) rather than posting exploit details publicly.
 
 **Like this project?** Give it a GitHub **Star** and share a real use case. We value constructive feedback over artificial traffic.
