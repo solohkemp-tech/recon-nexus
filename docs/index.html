@@ -3,10 +3,28 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>RECON//NEXUS — Smart Pentest Recon Engine</title>
+<title>RECON//NEXUS — Python OSINT &amp; Recon Toolkit | CLI, GUI &amp; Web</title>
+<meta name="description" content="Explore open-source OSINT and authorized reconnaissance: Python CLI and GUI for DNS, TLS, Certificate Transparency, Wayback and security headers, plus a free browser research-query explorer.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://solohkemp-tech.github.io/recon-nexus/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="RECON//NEXUS">
+<meta property="og:url" content="https://solohkemp-tech.github.io/recon-nexus/">
+<meta property="og:title" content="RECON//NEXUS — Open-Source OSINT &amp; Recon Toolkit">
+<meta property="og:description" content="Research security queries in your browser, or use the open-source Python CLI and GUI for authorized DNS, TLS, Wayback and HTTP header analysis.">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="RECON//NEXUS — Python OSINT &amp; Recon Toolkit">
+<meta name="twitter:description" content="Free browser query explorer and a Python CLI/desktop GUI for authorized reconnaissance.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
+.github-link{font-size:11px;color:#2ee6a8;text-decoration:none;border:1px solid #243a61;padding:8px 10px;white-space:nowrap}
+.github-link:hover,.discovery-intro a:hover{color:#eef4ff;border-color:#2ee6a8}
+.discovery-intro{border:1px solid #182741;padding:13px 18px;margin-bottom:16px;background:#0a1120;line-height:1.7}
+.discovery-intro h2{font-family:'Chakra Petch',sans-serif;font-size:16px;color:#eef4ff;margin-bottom:5px}
+.discovery-intro p{font-size:12px;color:#c7d5ee;margin:3px 0}
+.discovery-intro a{color:#45c8ff}
+@media(max-width:650px){.github-link{font-size:9px;padding:7px}.discovery-intro{padding:12px}}
 *{margin:0;padding:0;box-sizing:border-box}
 :root{--bg0:#070c14;--panel:#0c1424;--panel2:#0a1120;--line:#182741;--line2:#243a61;--txt:#c7d5ee;--dim:#5c7195;--bright:#eef4ff;--grn:#2ee6a8;--cyn:#45c8ff;--amb:#ffb545;--red:#ff5470;--mag:#c77dff;--blu:#6ea8ff;--mono:'JetBrains Mono',Consolas,monospace;--disp:'Chakra Petch',sans-serif}
 body{background:radial-gradient(1000px 520px at 88% -8%,rgba(69,200,255,.07),transparent 60%),radial-gradient(900px 640px at -8% 108%,rgba(46,230,168,.06),transparent 60%),var(--bg0);color:var(--txt);font-family:var(--mono);font-size:13px;min-height:100vh}
@@ -121,6 +139,7 @@ footer a{color:var(--cyn);text-decoration:none}
     <div class="brand"><h1>RECON<b>//</b>NEXUS</h1><small>SMART PENTEST RECON ENGINE · v3.0.0 · WEB</small></div>
   </div>
   <div class="hspace"></div>
+  <a class="github-link" href="https://github.com/solohkemp-tech/recon-nexus" target="_blank" rel="noopener noreferrer" aria-label="View RECON NEXUS open-source code and Python editions on GitHub">SOURCE ON GITHUB ↗</a>
   <div class="hstat"><span id="scope-txt">SCOPE: —</span></div>
   <div class="hstat">UTC <span id="utc">--:--:--</span></div>
 </header>
@@ -134,6 +153,12 @@ footer a{color:var(--cyn);text-decoration:none}
       <button class="ghost" id="clearbtn">CLEAR</button>
     </div>
     <div class="hint">press <kbd>/</kbd> to focus · <kbd>ENTER</kbd> to lock · all payloads re-arm automatically</div>
+  </section>
+  <section class="discovery-intro" aria-labelledby="recon-about-title">
+    <h2 id="recon-about-title">Free OSINT search-query explorer for authorized security research</h2>
+    <p>Browse and filter categorized research queries, then open them using an external search engine. This <strong>static web edition does not scan targets</strong>.</p>
+    <p>For Python reconnaissance modules including DNS, TLS, Certificate Transparency, Wayback and security-header review, explore the open-source <a href="https://github.com/solohkemp-tech/recon-nexus/tree/main/cli" target="_blank" rel="noopener noreferrer">CLI</a> and <a href="https://github.com/solohkemp-tech/recon-nexus/tree/main/gui" target="_blank" rel="noopener noreferrer">desktop GUI</a>. Use these tools only within authorized scope.</p>
+    <p><a href="https://github.com/solohkemp-tech/recon-nexus#quick-start" target="_blank" rel="noopener noreferrer">Read the installation guide, review limitations and contribute on GitHub</a>.</p>
   </section>
   <div class="workspace">
     <div class="main-col">
